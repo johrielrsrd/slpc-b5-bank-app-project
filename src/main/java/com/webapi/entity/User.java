@@ -15,6 +15,12 @@ public class User {
 
     private String email;
 
+    private int mobileNumber;
+
+    private String username;
+
+    private String password;
+
     public Integer getId() {
         return id;
     }
@@ -38,4 +44,16 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public int getMobileNumber() { return mobileNumber; }
+
+    public void setMobileNumber(int mobileNumber) { this.mobileNumber = mobileNumber; }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) { this.password = password; }
 }
