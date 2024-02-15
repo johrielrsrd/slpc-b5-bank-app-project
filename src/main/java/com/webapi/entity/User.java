@@ -15,7 +15,7 @@ public class User {
 
     private String email;
 
-    private int mobileNumber;
+    private String mobileNumber;
 
     private String username;
 
@@ -45,9 +45,9 @@ public class User {
         this.email = email;
     }
 
-    public int getMobileNumber() { return mobileNumber; }
+    public String getMobileNumber() { return mobileNumber; }
 
-    public void setMobileNumber(int mobileNumber) { this.mobileNumber = mobileNumber; }
+    public void setMobileNumber(String mobileNumber) { this.mobileNumber = mobileNumber; }
 
     public String getUsername() { return username; }
 
