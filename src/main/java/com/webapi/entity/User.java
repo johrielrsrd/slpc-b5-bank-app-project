@@ -1,31 +1,33 @@
 package com.webapi.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    private int id;
 
     private String name;
 
     private String email;
 
-    private String mobileNumber;
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Balance> balances;
 
-    private String username;
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Transaction> transactions;
 
-    private String password;
-
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,15 +47,19 @@ public class User {
         this.email = email;
     }
 
-    public String getMobileNumber() { return mobileNumber; }
+    public List<Balance> getBalances() {
+        return balances;
+    }
 
-    public void setMobileNumber(String mobileNumber) { this.mobileNumber = mobileNumber; }
+    public void setBalances(List<Balance> balances) {
+        this.balances = balances;
+    }
 
-    public String getUsername() { return username; }
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
 
-    public void setUsername(String username) { this.username = username; }
-
-    public String getPassword() { return password; }
-
-    public void setPassword(String password) { this.password = password; }
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 }
