@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Transaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int amount;
     private String name;
