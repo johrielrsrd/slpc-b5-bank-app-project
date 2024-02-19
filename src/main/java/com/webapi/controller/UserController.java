@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -55,11 +56,14 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/user/{username}/{password}")
-    public @ResponseBody Iterable<User> getUserByCredentials(
+    @GetMapping(path = "/user/{username}/{password}")
+    public ResponseEntity<User> getUserByCredentials(
             @PathVariable String email,
             @PathVariable String password) {
 
-        return userRepository.findByEmailAndPassword(email, password);
+        Optional<User> userOptional = userRepository.findByEmailAndPassword(email, password);
+
+        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
