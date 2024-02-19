@@ -11,10 +11,11 @@ public class User {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
 
-    private String name;
-
+    private String username;
+    private String firstname;
+    private String lastname;
     private String email;
-
+    private String mobile;
     private String password;
 
     @JsonIgnoreProperties("user")
@@ -25,6 +26,18 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
+    public User() {
+    }
+
+    public User(String username, String firstname, String lastname, String email, String mobile, String password) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.mobile = mobile;
+        this.password = password;
+    }
+
     public int getId() {
         return id;
     }
@@ -33,13 +46,19 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getFirstname() { return firstname; }
+
+    public void setFirstname(String firstname) { this.firstname = firstname; }
+
+    public String getLastname() { return lastname; }
+
+    public void setLastname(String lastname) { this.lastname = lastname; }
 
     public String getEmail() {
         return email;
@@ -48,6 +67,10 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getMobile() { return mobile; }
+
+    public void setMobile(String mobile) { this.mobile = mobile; }
 
     public String getPassword() { return password; }
 
