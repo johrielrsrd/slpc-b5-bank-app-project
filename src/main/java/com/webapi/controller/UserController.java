@@ -4,6 +4,7 @@ import com.webapi.entity.Balance;
 import com.webapi.entity.User;
 import com.webapi.repository.BalanceRepository;
 import com.webapi.repository.UserRepository;
+import com.webapi.services.LoginRequest;
 
 import com.webapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @RequestMapping(path = "/user")
 public class UserController {
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
     private UserRepository userRepository;
 
@@ -26,7 +27,7 @@ public class UserController {
     private BalanceRepository balanceRepository;
 
     @PostMapping("/add")
-    public ResponseEntity<Object> addNewUser(@RequestBody(required = false) User userRequest) {
+    public ResponseEntity<User> addNewUser(@RequestBody(required = false) User userRequest) {
 
         String username = userRequest.getUsername();
         String email = userRequest.getEmail();
@@ -50,9 +51,26 @@ public class UserController {
             bal.setUser(newUser);
             balanceRepository.save(bal);
 
-            return new ResponseEntity<>("Saved", HttpStatus.CREATED);
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>("Duplicate entry found", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+
+        if (username != null && password != null) {
+            Optional<User> userOptional = userRepository.findByUserAndPassword(username, password);
+
+            if (userOptional.isPresent()) {
+                return new ResponseEntity<>("Login successful", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+            }
+        } else {
+            return new ResponseEntity<>("Invalid input", HttpStatus.BAD_REQUEST);
         }
     }
 
