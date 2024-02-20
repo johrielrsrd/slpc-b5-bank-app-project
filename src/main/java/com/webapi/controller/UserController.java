@@ -62,7 +62,7 @@ public class UserController {
         String password = loginRequest.getPassword();
 
         if (username != null && password != null) {
-            Optional<User> userOptional = userRepository.findByUserAndPassword(username, password);
+            Optional<User> userOptional = userRepository.findByUsernameAndPassword(username, password);
 
             if (userOptional.isPresent()) {
                 return new ResponseEntity<>("Login successful", HttpStatus.OK);
@@ -89,14 +89,5 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping(path = "/user/{username}/{password}")
-    public ResponseEntity<User> getUserByCredentials(
-            @PathVariable String username,
-            @PathVariable String password) {
 
-        Optional<User> userOptional = userRepository.findByUserAndPassword(username, password);
-
-        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
 }
