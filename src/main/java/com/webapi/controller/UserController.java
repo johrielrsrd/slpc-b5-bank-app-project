@@ -46,10 +46,7 @@ public class UserController {
             );
             userService.createUser(newUser);
 
-            Balance bal = new Balance();
-            bal.setAmount(1000);
-            bal.setUser(newUser);
-            balanceRepository.save(bal);
+            userService.createUserWithInitialBalance(newUser, 1000);
 
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } else {
