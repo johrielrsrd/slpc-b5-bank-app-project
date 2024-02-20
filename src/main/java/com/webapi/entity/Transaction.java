@@ -18,7 +18,7 @@ public class Transaction {
 
     @JsonIgnoreProperties("transactions")
     @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
     private User user;
 
     public int getId() {

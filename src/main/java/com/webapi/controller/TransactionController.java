@@ -33,7 +33,7 @@ public class TransactionController {
             t.setName(name);
             t.setDate(LocalDateTime.now());
             t.setUser(user);
-            transactionRepository.saveAndFlush(t);
+            transactionRepository.save(t);
 
             return "Saved";
         } else {
