@@ -1,10 +1,9 @@
 package com.webapi.controller;
 
-import com.webapi.entity.Balance;
 import com.webapi.entity.User;
 import com.webapi.repository.BalanceRepository;
 import com.webapi.repository.UserRepository;
-import com.webapi.services.LoginRequest;
+import com.webapi.DTO.LoginRequest;
 
 import com.webapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -55,10 +53,10 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
-        String username = loginRequest.getUsername();
-        String password = loginRequest.getPassword();
+        String username = loginRequest.username();
+        String password = loginRequest.password();
 
-        if (username != null && password != null) {
+        if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
             Optional<User> userOptional = userRepository.findByUsernameAndPassword(username, password);
 
             if (userOptional.isPresent()) {
