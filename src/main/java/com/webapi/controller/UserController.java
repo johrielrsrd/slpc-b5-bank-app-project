@@ -1,15 +1,15 @@
 package com.webapi.controller;
 
-import com.webapi.entity.Balance;
 import com.webapi.entity.User;
 import com.webapi.repository.BalanceRepository;
 import com.webapi.repository.UserRepository;
+import com.webapi.DTO.LoginRequest;
 
+import com.webapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -17,32 +17,56 @@ import java.util.Optional;
 @RequestMapping(path = "/user")
 public class UserController {
     @Autowired
+    private UserService userService;
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private BalanceRepository balanceRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @PostMapping("/add")
+    public ResponseEntity<User> addNewUser(@RequestBody(required = false) User userRequest) {
 
-    @PostMapping(path = "/add")
-    public @ResponseBody String addNewUser(@RequestParam String name
-            , @RequestParam String email , @RequestParam String password) {
+        String username = userRequest.getUsername();
+        String email = userRequest.getEmail();
+        String mobile = userRequest.getMobile();
 
-        String hashedPassword = passwordEncoder.encode(password);
+        if (!userService.findByUsername(username).isPresent() &&
+                !userService.findByEmail(email).isPresent() &&
+                !userService.findByMobile(mobile).isPresent()) {
+            User newUser = new User(
+                    username,
+                    userRequest.getFirstname(),
+                    userRequest.getLastname(),
+                    email,
+                    mobile,
+                    userRequest.getPassword()
+            );
+            userService.createUser(newUser);
 
-        User n = new User();
-        n.setName(name);
-        n.setEmail(email);
-        n.setPassword(hashedPassword);
-        userRepository.save(n);
+            userService.createUserWithInitialBalance(newUser, 1000);
 
-        Balance bal = new Balance();
-        bal.setAmount(1000);
-        bal.setUser(n);
-        balanceRepository.save(bal);
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+        String username = loginRequest.username();
+        String password = loginRequest.password();
 
-        return "Saved";
+        if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
+            Optional<User> userOptional = userRepository.findByUsernameAndPassword(username, password);
+
+            if (userOptional.isPresent()) {
+                return new ResponseEntity<>("Login successful", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+            }
+        } else {
+            return new ResponseEntity<>("Invalid input", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(path = "/all")
@@ -60,11 +84,5 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/user/{username}/{password}")
-    public @ResponseBody Iterable<User> getUserByCredentials(
-            @PathVariable String username,
-            @PathVariable String password) {
 
-        return userRepository.findByUsernameAndPassword(username, password);
-    }
 }
