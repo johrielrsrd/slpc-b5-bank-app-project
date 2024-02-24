@@ -5,7 +5,7 @@ import com.webapi.repository.BalanceRepository;
 import com.webapi.repository.UserRepository;
 import com.webapi.DTO.LoginRequest;
 
-import com.webapi.services.UserService;
+import com.webapi.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequestMapping(path = "/user")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private IUserService IUserService;
     @Autowired
     private UserRepository userRepository;
 
@@ -25,32 +25,24 @@ public class UserController {
     private BalanceRepository balanceRepository;
 
     @PostMapping("/add")
-    public ResponseEntity<User> addNewUser(@RequestBody(required = false) User userRequest) {
+    public ResponseEntity<User> addNewUser(@RequestBody(required = false) User newUser) {
 
-        String username = userRequest.getUsername();
-        String email = userRequest.getEmail();
-        String mobile = userRequest.getMobile();
+        String username = newUser.getUsername();
+        String email = newUser.getEmail();
+        String mobile = newUser.getMobile();
 
-        if (!userService.findByUsername(username).isPresent() &&
-                !userService.findByEmail(email).isPresent() &&
-                !userService.findByMobile(mobile).isPresent()) {
-            User newUser = new User(
-                    username,
-                    userRequest.getFirstname(),
-                    userRequest.getLastname(),
-                    email,
-                    mobile,
-                    userRequest.getPassword()
-            );
-            userService.createUser(newUser);
+        if (!IUserService.findByUsername(username).isPresent() &&
+                !IUserService.findByEmail(email).isPresent() &&
+                !IUserService.findByMobile(mobile).isPresent()) {
 
-            userService.createUserWithInitialBalance(newUser, 1000);
+            IUserService.createUserWithInitialBalance(newUser, 1000);
 
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
+
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
         String username = loginRequest.username();
@@ -76,6 +68,7 @@ public class UserController {
 
     @GetMapping(path = "{id}")
     public ResponseEntity<User> getTutorialById(@PathVariable("id") int id) {
+
         Optional<User> userData = userRepository.findById(id);
 
         if (userData.isPresent()) {
