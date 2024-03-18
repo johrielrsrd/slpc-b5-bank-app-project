@@ -24,6 +24,7 @@ public class UserController {
     @Autowired
     private BalanceRepository balanceRepository;
 
+    @CrossOrigin(origins = "http://localhost:3000/")
     @PostMapping("/add")
     public ResponseEntity<User> addNewUser(@RequestBody(required = false) User newUser) {
 
@@ -43,6 +44,7 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:3000/")
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
         String username = loginRequest.username();
